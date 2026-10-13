@@ -1,0 +1,1 @@
+var t=[{path:``,loadComponent:()=>import(`./chunk-D-A7WUB9.js`).then(o=>o.AthleteDashboardComponent)}];export{t as ATHLETE_ROUTES};
