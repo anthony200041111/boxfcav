@@ -34,8 +34,9 @@
               "src/styles.scss"
             ]
           },
-          "configurations": {
+"configurations": {
             "production": {
+              "baseHref": "https://anthony200041111.github.io/boxfcav/",
               "budgets": [
                 {
                   "type": "initial",
