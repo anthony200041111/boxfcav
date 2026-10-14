@@ -1,0 +1,1 @@
+var t=[{path:``,loadComponent:()=>import(`./chunk-Dg5mfrgm.js`).then(o=>o.CoachDashboardComponent)}];export{t as COACH_ROUTES};

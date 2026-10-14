@@ -1,1 +1,0 @@
-var t=[{path:``,loadComponent:()=>import(`./chunk-BmHuMg7u.js`).then(o=>o.CoachDashboardComponent)}];export{t as COACH_ROUTES};

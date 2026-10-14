@@ -1,0 +1,1 @@
+var t=[{path:``,loadComponent:()=>import(`./chunk-E8C2xkdh.js`).then(o=>o.AdminDashboardComponent)}];export{t as ADMIN_ROUTES};
