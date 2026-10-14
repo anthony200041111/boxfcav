@@ -16,160 +16,206 @@ import { UserProfile } from '@core/models/user.model';
   imports: [CommonModule, ReactiveFormsModule],
   template: `
     <div class="dashboard-container">
+      <!-- HEADER PRINCIPAL CON IDENTIDAD WOLF -->
       <header class="dashboard-header">
-        <h1>🐺 FC ACTIVE WOLF - Panel de Coach</h1>
-        <div class="user-info">
-          <span>Coach: {{ userProfile()?.nombre || 'Entrenador' }}</span>
-          <button class="logout-btn" (click)="logout()">Cerrar Sesión</button>
+        <div class="brand-box">
+          <div class="wolf-logo-badge">🐺</div>
+          <div>
+            <h1>FC ACTIVE WOLF</h1>
+            <span class="subtitle-tag">Panel de Control Staff / Coach</span>
+          </div>
+        </div>
+        <div class="user-info-card">
+          <div class="user-avatar-small">
+            @if (userProfile()?.fotoUrl) {
+              <img [src]="userProfile()?.fotoUrl" alt="Avatar" />
+            } @else {
+              <span>🔥</span>
+            }
+          </div>
+          <div class="user-details">
+            <span class="user-name">Coach: {{ userProfile()?.nombre || 'Entrenador' }}</span>
+            <span class="streak-badge">Staff Autorizado</span>
+          </div>
+          <button class="logout-btn" (click)="logout()" title="Cerrar Sesión">⏻ Salir</button>
         </div>
       </header>
 
-      <main class="content">
+      <main class="content-grid-layout">
+        
+        <!-- MENÚ DE NAVEGACIÓN RÁPIDA O VISTAS -->
         @if (activeView() === 'menu') {
-          <div class="section-title">
-            <h2>🏠 Menú Principal - Staff</h2>
+          <div class="welcome-banner-hero">
+            <div class="hero-text">
+              <h2>Panel de Control y Gestión del Box 🐺🔥</h2>
+              <p>Selecciona una opción abajo para programar entrenamientos, gestionar torneos, cupos de clases, anuncios o supervisar a la manada.</p>
+            </div>
           </div>
-          <div class="menu-grid">
-            <div class="menu-card" (click)="activeView.set('wod')">
-              <div class="menu-icon">📝</div>
+
+          <div class="menu-grid-cards">
+            <div class="interactive-card" (click)="activeView.set('wod')">
+              <div class="card-icon-wrapper">📝</div>
               <h3>Gestión de WODs</h3>
-              <p>Publica entrenamientos diarios y edita el historial de WODs.</p>
+              <p>Publica los entrenamientos diarios del box y edita el historial de la pizarra.</p>
+              <span class="card-action-link">Administrar WODs &rarr;</span>
             </div>
 
-            <div class="menu-card" (click)="activeView.set('classes')">
-              <div class="menu-icon">📅</div>
-              <h3>Horarios & WODs de Clases</h3>
-              <p>Crea turnos de clases, asigna cupos y vincula un WOD específico.</p>
+            <div class="interactive-card" (click)="activeView.set('classes')">
+              <div class="card-icon-wrapper">📅</div>
+              <h3>Clases & Horarios</h3>
+              <p>Crea turnos de clases, configura cupos máximos y vincula WODs específicos.</p>
+              <span class="card-action-link">Gestionar Clases &rarr;</span>
             </div>
 
-            <div class="menu-card" (click)="activeView.set('announcements')">
-              <div class="menu-icon">📢</div>
+            <!-- ACCESO DIRECTO A COMPETENCIAS DESDE EL PANEL DE COACH -->
+            <div class="interactive-card" (click)="goToCompetitions()">
+              <div class="card-icon-wrapper">🏆</div>
+              <h3>Arena de Competencias</h3>
+              <p>Supervisa los torneos, throws y eventos activos de la comunidad.</p>
+              <span class="card-action-link">Ir a Torneos &rarr;</span>
+            </div>
+
+            <div class="interactive-card" (click)="activeView.set('announcements')">
+              <div class="card-icon-wrapper">📢</div>
               <h3>Muro de Anuncios</h3>
-              <p>Publica avisos importantes y gestiona o elimina noticias del box.</p>
+              <p>Publica avisos importantes y mantén informada a toda la comunidad de atletas.</p>
+              <span class="card-action-link">Ver Muro &rarr;</span>
             </div>
 
-            <div class="menu-card" (click)="activeView.set('athletes')">
-              <div class="menu-icon">👥</div>
+            <div class="interactive-card" (click)="activeView.set('athletes')">
+              <div class="card-icon-wrapper">👥</div>
               <h3>Atletas del Box</h3>
-              <p>Monitorea los miembros inscritos y el estado de sus membresías.</p>
+              <p>Supervisa los miembros inscritos y monitorea el estado actual de sus membresías.</p>
+              <span class="card-action-link">Ver Atletas &rarr;</span>
             </div>
 
-            <div class="menu-card" (click)="loadCommunityUsers(); activeView.set('social')">
-              <div class="menu-icon">🌍</div>
+            <div class="interactive-card" (click)="loadCommunityUsers(); activeView.set('social')">
+              <div class="card-icon-wrapper">🌍</div>
               <h3>Comunidad Social</h3>
-              <p>Visualiza los perfiles y biografías de los atletas y coaches.</p>
+              <p>Visualiza los perfiles, avatares y biografías de la comunidad del box.</p>
+              <span class="card-action-link">Explorar Comunidad &rarr;</span>
             </div>
 
-            <div class="menu-card" (click)="activeView.set('profile')">
-              <div class="menu-icon">⚙️</div>
-              <h3>Mi Perfil</h3>
-              <p>Actualiza tu foto, información personal y biografía de coach.</p>
+            <div class="interactive-card" (click)="activeView.set('profile')">
+              <div class="card-icon-wrapper">⚙️</div>
+              <h3>Mi Perfil Coach</h3>
+              <p>Personaliza tu foto de dispositivo, nombre y biografía profesional como entrenador.</p>
+              <span class="card-action-link">Editar Perfil &rarr;</span>
             </div>
           </div>
+
         } @else {
-          <button class="back-menu-btn" (click)="activeView.set('menu')">⬅️ Volver al Menú</button>
+          <!-- BOTÓN DE RETORNO FLUIDO -->
+          <div class="navigation-top-bar">
+            <button class="back-menu-btn" (click)="activeView.set('menu')">
+              ⬅️ Volver al Menú Principal
+            </button>
+          </div>
         }
 
+        <!-- VISTA: GESTIÓN DE WODS -->
         @if (activeView() === 'wod') {
-          <div class="wod-layout" style="margin-top: 20px;">
-            <section class="publish-section">
-              <div class="section-title">
-                <h2>{{ editingWodId() ? '✏️ Editar WOD' : '📝 Publicar WOD del Día' }}</h2>
-              </div>
-
-              <div class="form-card">
-                <form [formGroup]="wodForm" (ngSubmit)="saveWod()">
-                  <div class="form-row">
-                    <div class="form-group">
-                      <label>Fecha del WOD</label>
-                      <input type="date" formControlName="fecha" />
-                    </div>
-                    <div class="form-group">
-                      <label>Tipo de Entrenamiento</label>
-                      <select formControlName="tipo">
-                        @for (type of wodTypes; track type) {
-                          <option [value]="type">{{ type }}</option>
-                        }
-                      </select>
-                    </div>
-                  </div>
-
-                  <div class="form-group">
-                    <label>Título del WOD</label>
-                    <input type="text" formControlName="titulo" placeholder="Ej. WOD - Fran o Heavy Squat Clean" />
-                  </div>
-
-                  <div class="form-group">
-                    <label>Descripción / Movimientos</label>
-                    <textarea formControlName="descripcion" rows="5" placeholder="21-15-9 Thrusters..."></textarea>
-                  </div>
-
-                  <div class="form-group">
-                    <label>Nota del Coach (opcional)</label>
-                    <input type="text" formControlName="notaCoach" placeholder="Consejo o estímulo..." />
-                  </div>
-
-                  @if (successMessage()) {
-                    <div class="success-msg">{{ successMessage() }}</div>
-                  }
-
-                  <div class="button-group">
-                    <button type="submit" class="submit-btn" [disabled]="wodForm.invalid || publishing()">
-                      {{ publishing() ? 'Guardando...' : (editingWodId() ? 'ACTUALIZAR WOD' : 'PUBLICAR WOD') }}
-                    </button>
-                    @if (editingWodId()) {
-                      <button type="button" class="cancel-edit-btn" (click)="cancelEditWod()">Cancelar</button>
-                    }
-                  </div>
-                </form>
-              </div>
-            </section>
-
-            <section class="history-section" style="margin-top: 30px;">
-              <div class="section-title">
-                <h2>📚 Historial de WODs Creados</h2>
-              </div>
-              <div class="wods-list">
-                @for (w of wodsList(); track w.id) {
-                  <div class="wod-item-card">
-                    <div class="wod-item-header">
-                      <span class="date-tag">{{ w.fecha }}</span>
-                      <span class="type-badge">{{ w.tipo }}</span>
-                    </div>
-                    <h4>{{ w.titulo }}</h4>
-                    <p>{{ w.descripcion }}</p>
-                    <button class="edit-btn" (click)="selectWodForEdit(w)">Editar WOD</button>
-                  </div>
-                }
-              </div>
-            </section>
-          </div>
-
-        } @else if (activeView() === 'classes') {
-          <section class="classes-mgmt-section" style="margin-top: 20px;">
-            <div class="section-title">
-              <h2>{{ editingClassId() ? '✏️ Modificar Horario de Clase' : '📅 Programar Horario de Clase & WOD' }}</h2>
+          <div class="view-section-fade">
+            <div class="section-heading">
+              <h2>{{ editingWodId() ? '✏️ Editar WOD Existente' : '📝 Publicar WOD del Día' }}</h2>
+              <p>Crea o modifica el entrenamiento oficial para los atletas.</p>
             </div>
 
-            <div class="form-card" style="margin-bottom: 30px;">
+            <div class="form-card-modern">
+              <form [formGroup]="wodForm" (ngSubmit)="saveWod()">
+                <div class="form-grid-row">
+                  <div class="input-field-group">
+                    <label>Fecha del WOD</label>
+                    <input type="date" formControlName="fecha" />
+                  </div>
+                  <div class="input-field-group">
+                    <label>Tipo de Entrenamiento</label>
+                    <select formControlName="tipo">
+                      @for (type of wodTypes; track type) {
+                        <option [value]="type">{{ type }}</option>
+                      }
+                    </select>
+                  </div>
+                </div>
+
+                <div class="input-field-group">
+                  <label>Título del WOD</label>
+                  <input type="text" formControlName="titulo" placeholder="Ej. WOD - Fran o Heavy Squat Clean" />
+                </div>
+
+                <div class="input-field-group">
+                  <label>Descripción / Movimientos</label>
+                  <textarea formControlName="descripcion" rows="5" placeholder="21-15-9 Thrusters..."></textarea>
+                </div>
+
+                <div class="input-field-group">
+                  <label>Nota del Coach (Opcional)</label>
+                  <input type="text" formControlName="notaCoach" placeholder="Consejo estratégico o estímulo..." />
+                </div>
+
+                @if (successMessage()) {
+                  <div class="success-alert-box">{{ successMessage() }}</div>
+                }
+
+                <div class="form-button-row">
+                  <button type="submit" class="btn-submit-primary" [disabled]="wodForm.invalid || publishing()">
+                    {{ publishing() ? 'Guardando WOD...' : (editingWodId() ? 'ACTUALIZAR WOD' : 'PUBLICAR WOD 🐺') }}
+                  </button>
+                  @if (editingWodId()) {
+                    <button type="button" class="btn-action-cancel" (click)="cancelEditWod()">Cancelar</button>
+                  }
+                </div>
+              </form>
+            </div>
+
+            <div class="section-heading" style="margin-top: 40px;">
+              <h2>📚 Historial de Wods Creados</h2>
+              <p>Registro completo de entrenamientos anteriores.</p>
+            </div>
+
+            <div class="wods-modern-grid">
+              @for (w of wodsList(); track w.id) {
+                <div class="wod-item-card-box">
+                  <div class="wod-item-meta">
+                    <span class="time-pill">{{ w.fecha }}</span>
+                    <span class="spots-pill">{{ w.tipo }}</span>
+                  </div>
+                  <h4>{{ w.titulo }}</h4>
+                  <p class="wod-desc-text">{{ w.descripcion }}</p>
+                  <button class="btn-edit-small" (click)="selectWodForEdit(w)">Modificar WOD</button>
+                </div>
+              }
+            </div>
+          </div>
+        }
+
+        <!-- VISTA: CLASES Y HORARIOS -->
+        @if (activeView() === 'classes') {
+          <div class="view-section-fade">
+            <div class="section-heading">
+              <h2>{{ editingClassId() ? '✏️ Modificar Horario de Clase' : '📅 Programar Horario de Clase & WOD' }}</h2>
+              <p>Define los turnos disponibles y asigna el entrenamiento correspondiente.</p>
+            </div>
+
+            <div class="form-card-modern">
               <form [formGroup]="classForm" (ngSubmit)="saveClassSlot()">
-                <div class="form-row">
-                  <div class="form-group">
+                <div class="form-grid-row">
+                  <div class="input-field-group">
                     <label>Fecha de la Clase</label>
                     <input type="date" formControlName="fecha" />
                   </div>
-                  <div class="form-group">
+                  <div class="input-field-group">
                     <label>Horario (Ej. 07:00 AM)</label>
                     <input type="text" formControlName="horario" placeholder="07:00 AM" />
                   </div>
                 </div>
 
-                <div class="form-row">
-                  <div class="form-group">
+                <div class="form-grid-row">
+                  <div class="input-field-group">
                     <label>Capacidad Máxima de Atletas</label>
                     <input type="number" formControlName="capacidadMaxima" />
                   </div>
-                  <div class="form-group">
+                  <div class="input-field-group">
                     <label>Asignar WOD</label>
                     <select formControlName="wodId">
                       <option value="">-- Sin WOD asignado --</option>
@@ -181,93 +227,108 @@ import { UserProfile } from '@core/models/user.model';
                 </div>
 
                 @if (classSuccessMessage()) {
-                  <div class="success-msg">{{ classSuccessMessage() }}</div>
+                  <div class="success-alert-box">{{ classSuccessMessage() }}</div>
                 }
 
-                <div class="button-group">
-                  <button type="submit" class="submit-btn" [disabled]="classForm.invalid || savingClass()">
-                    {{ savingClass() ? 'Guardando...' : (editingClassId() ? 'ACTUALIZAR CLASE' : 'CREAR HORARIO DE CLASE') }}
+                <div class="form-button-row">
+                  <button type="submit" class="btn-submit-primary" [disabled]="classForm.invalid || savingClass()">
+                    {{ savingClass() ? 'Guardando...' : (editingClassId() ? 'ACTUALIZAR CLASE' : 'CREAR HORARIO DE CLASE 🐺') }}
                   </button>
                   @if (editingClassId()) {
-                    <button type="button" class="cancel-edit-btn" (click)="cancelEditClass()">Cancelar</button>
+                    <button type="button" class="btn-action-cancel" (click)="cancelEditClass()">Cancelar</button>
                   }
                 </div>
               </form>
             </div>
 
-            <div class="section-title">
+            <div class="section-heading" style="margin-top: 40px;">
               <h2>📋 Listado de Clases Programadas</h2>
+              <p>Control de cupos y ocupación en tiempo real.</p>
             </div>
-            <div class="classes-grid">
+
+            <div class="classes-grid-modern">
               @for (c of classesList(); track c.id) {
-                <div class="class-card">
-                  <div class="time-badge">{{ c.fecha }} - {{ c.horario }}</div>
-                  <h3>Coach: {{ c.coachName || 'Staff' }}</h3>
-                  <p class="spots-info">Cupos Máximos: <strong>{{ c.capacidadMaxima }}</strong></p>
-                  <p class="spots-info">Inscritos: <strong>{{ c.atletasInscritos?.length || 0 }}</strong></p>
-                  <button class="edit-btn" style="width: 100%; margin-top: 10px;" (click)="selectClassForEdit(c)">Modificar Clase</button>
+                <div class="class-card-item">
+                  <div class="class-card-header">
+                    <span class="time-pill">{{ c.fecha }} - {{ c.horario }}</span>
+                    <span class="spots-pill">{{ c.atletasInscritos.length }} / {{ c.capacidadMaxima }} inscritos</span>
+                  </div>
+                  <div class="class-card-body">
+                    <h4>Coach: {{ c.coachName || 'Staff' }}</h4>
+                  </div>
+                  <div class="class-card-footer">
+                    <button class="btn-edit-small" style="width: 100%;" (click)="selectClassForEdit(c)">Modificar Clase</button>
+                  </div>
                 </div>
               }
             </div>
-          </section>
+          </div>
+        }
 
-        } @else if (activeView() === 'announcements') {
-          <section class="announcements-section" style="margin-top: 20px;">
-            <div class="section-title">
-              <h2>📢 Gestión del Muro de Anuncios</h2>
+        <!-- VISTA: ANUNCIOS -->
+        @if (activeView() === 'announcements') {
+          <div class="view-section-fade">
+            <div class="section-heading">
+              <h2>📢 Muro de Anuncios Oficiales</h2>
+              <p>Comunícate directamente con toda la comunidad del box.</p>
             </div>
 
-            <div class="form-card" style="margin-bottom: 30px;">
+            <div class="form-card-modern">
               <form [formGroup]="announcementForm" (ngSubmit)="publishAnnouncement()">
-                <div class="form-group">
+                <div class="input-field-group">
                   <label>Título del Anuncio</label>
                   <input type="text" formControlName="titulo" placeholder="Ej. Horario especial por Feriado" />
                 </div>
 
-                <div class="form-group">
+                <div class="input-field-group">
                   <label>Contenido del Mensaje</label>
                   <textarea formControlName="contenido" rows="4" placeholder="Escribe los detalles del aviso..."></textarea>
                 </div>
 
                 @if (announcementSuccess()) {
-                  <div class="success-msg">{{ announcementSuccess() }}</div>
+                  <div class="success-alert-box">{{ announcementSuccess() }}</div>
                 }
 
-                <button type="submit" class="submit-btn" [disabled]="announcementForm.invalid || publishingAnnouncement()">
-                  {{ publishingAnnouncement() ? 'Publicando...' : 'PUBLICAR AVISO' }}
+                <button type="submit" class="btn-submit-primary" [disabled]="announcementForm.invalid || publishingAnnouncement()">
+                  {{ publishingAnnouncement() ? 'Publicando...' : 'PUBLICAR AVISO EN EL MURO 🐺' }}
                 </button>
               </form>
             </div>
 
-            <div class="section-title">
-              <h2>📚 Anuncios Activos en el Muro</h2>
+            <div class="section-heading" style="margin-top: 40px;">
+              <h2>📚 Anuncios Activos</h2>
             </div>
-            <div class="wods-list">
+
+            <div class="wods-modern-grid">
               @if (announcementsList().length === 0) {
-                <p class="loading-text">No hay anuncios publicados actualmente.</p>
+                <div class="empty-card-state">No hay anuncios publicados actualmente.</div>
               } @else {
                 @for (ann of announcementsList(); track ann.id) {
-                  <div class="wod-item-card">
-                    <div class="wod-item-header">
-                      <span class="date-tag">{{ ann.fecha }}</span>
-                      <span class="type-badge">Por: {{ ann.coachName }}</span>
+                  <div class="wod-item-card-box">
+                    <div class="wod-item-meta">
+                      <span class="time-pill">{{ ann.fecha }}</span>
+                      <span class="spots-pill">Por: {{ ann.coachName }}</span>
                     </div>
                     <h4>{{ ann.titulo }}</h4>
-                    <p>{{ ann.contenido }}</p>
-                    <button class="delete-btn" (click)="deleteAnnouncement(ann.id!)">Eliminar Anuncio</button>
+                    <p class="wod-desc-text">{{ ann.contenido }}</p>
+                    <button class="btn-action-cancel" style="padding: 6px 12px; font-size: 12px; width: auto;" (click)="deleteAnnouncement(ann.id!)">Eliminar Anuncio</button>
                   </div>
                 }
               }
             </div>
-          </section>
+          </div>
+        }
 
-        } @else if (activeView() === 'athletes') {
-          <section class="athletes-section" style="margin-top: 20px;">
-            <div class="section-title">
-              <h2>👥 Listado de Atletas Inscritos</h2>
+        <!-- VISTA: ATLETAS -->
+        @if (activeView() === 'athletes') {
+          <div class="view-section-fade">
+            <div class="section-heading">
+              <h2>👥 Listado de Atletas del Box</h2>
+              <p>Supervisión de miembros y estados de suscripción.</p>
             </div>
-            <div class="table-container">
-              <table class="athletes-table">
+
+            <div class="table-card-wrapper">
+              <table class="modern-data-table">
                 <thead>
                   <tr>
                     <th>Nombre</th>
@@ -280,161 +341,199 @@ import { UserProfile } from '@core/models/user.model';
                   @for (a of athletesList(); track a.uid) {
                     <tr>
                       <td><strong>{{ a.nombre }}</strong></td>
-                      <td>{{ a.email }}</td>
+                      <td><span class="date-text">{{ a.email }}</span></td>
                       <td>
-                        <span class="badge" [class.active]="a.estadoMembresia === 'activo'">
-                          {{ a.estadoMembresia | uppercase }}
+                        <span class="badge-rx-scaled" [class.rx-badge]="a.estadoMembresia === 'activo'" [class.scaled-badge]="a.estadoMembresia !== 'activo'">
+                          {{ (a.estadoMembresia || 'activo') | uppercase }}
                         </span>
                       </td>
-                      <td><span class="role-tag">{{ a.rol | uppercase }}</span></td>
+                      <td><span class="role-pill-badge badge-athlete">{{ a.rol | uppercase }}</span></td>
                     </tr>
                   }
                 </tbody>
               </table>
             </div>
-          </section>
+          </div>
+        }
 
-        } @else if (activeView() === 'social') {
-          <section class="social-section" style="margin-top: 20px;">
-            <div class="section-title">
+        <!-- VISTA: COMUNIDAD SOCIAL -->
+        @if (activeView() === 'social') {
+          <div class="view-section-fade">
+            <div class="section-heading">
               <h2>🌍 Comunidad Social del Box</h2>
+              <p>Perfiles y biografías de atletas y entrenadores. Haz clic en cualquiera para ver su detalle y PRs.</p>
             </div>
 
             @if (loadingCommunity()) {
-              <p class="loading-text">Cargando miembros de la comunidad...</p>
+              <div class="empty-card-state">Cargando miembros de la comunidad...</div>
             } @else {
-              <div class="community-grid">
+              <div class="community-grid-cards">
                 @for (member of communityMembers(); track member.uid) {
-                  <div class="member-card">
-                    <div class="member-avatar">
+                  <div class="member-profile-card clickable-card" (click)="goToProfile(member.uid)" title="Ver perfil y PRs">
+                    <div class="member-avatar-box">
                       @if (member.fotoUrl) {
-                        <img [src]="member.fotoUrl" alt="Avatar" class="avatar-img" />
+                        <img [src]="member.fotoUrl" alt="Avatar" class="avatar-real-img" />
                       } @else {
-                        🐺
+                        <span class="wolf-emoji-icon">🐺</span>
                       }
                     </div>
                     <h3>{{ member.nombre }}</h3>
-                    <span class="role-badge" [class]="member.rol">{{ member.rol | uppercase }}</span>
-                    <p class="member-bio">"{{ member.bio || 'Sin biografía aún.' }}"</p>
+                    <span class="role-pill-badge" [class.badge-athlete]="member.rol === 'athlete'" [class.badge-coach]="member.rol === 'coach'">
+                      {{ member.rol === 'coach' ? '🔥 COACH' : '💪 ATLETA' }}
+                    </span>
+                    <p class="member-bio-text">"{{ member.bio || 'Sin biografía aún.' }}"</p>
+                    <span class="view-profile-link">Ver PRs & Perfil &rarr;</span>
                   </div>
                 }
               </div>
             }
-          </section>
+          </div>
+        }
 
-        } @else if (activeView() === 'profile') {
-          <section class="profile-section" style="margin-top: 20px;">
-            <div class="section-title">
-              <h2>⚙️ Configuración de Mi Perfil Social</h2>
+        <!-- VISTA: MI PERFIL -->
+        @if (activeView() === 'profile') {
+          <div class="view-section-fade">
+            <div class="section-heading">
+              <h2>⚙️ Configuración de Mi Perfil Coach</h2>
+              <p>Personaliza tu identidad profesional dentro de la plataforma.</p>
             </div>
-            <div class="form-card">
+
+            <div class="form-card-modern profile-edit-box">
               <form [formGroup]="profileForm" (ngSubmit)="saveProfile()">
-                <div class="form-group">
+                <div class="input-field-group">
                   <label>Nombre Completo</label>
                   <input type="text" formControlName="nombre" placeholder="Tu nombre..." />
                 </div>
-                
-                <div class="form-group">
-                  <label>Subir Foto de Perfil (Dispositivo / Cámara)</label>
-                  <input type="file" accept="image/*" (change)="onFileSelected($event)" class="file-input" />
+
+                <div class="input-field-group">
+                  <label>Foto de Perfil (Dispositivo / Cámara)</label>
+                  <div class="file-upload-wrapper">
+                    <input type="file" accept="image/*" (change)="onFileSelected($event)" class="custom-file-input" />
+                  </div>
                   @if (profileForm.get('fotoUrl')?.value) {
-                    <div class="preview-container">
-                      <img [src]="profileForm.get('fotoUrl')?.value" alt="Vista previa" class="preview-img" />
-                      <small style="color: #2e7d32;">✔ Imagen cargada correctamente</small>
+                    <div class="preview-badge-container">
+                      <img [src]="profileForm.get('fotoUrl')?.value" alt="Vista previa" class="img-preview-circle" />
+                      <span class="success-preview-text">✔ Imagen lista para guardar</span>
                     </div>
                   }
                 </div>
 
-                <div class="form-group">
+                <div class="input-field-group">
                   <label>Biografía o Frase de Motivación</label>
                   <textarea formControlName="bio" rows="4" placeholder="Ej. Entrenador apasionado por el CrossFit..."></textarea>
                 </div>
+
                 @if (profileSuccess()) {
-                  <div class="success-msg">{{ profileSuccess() }}</div>
+                  <div class="success-alert-box">{{ profileSuccess() }}</div>
                 }
-                <button type="submit" class="submit-btn" [disabled]="profileForm.invalid || savingProfile()">
-                  {{ savingProfile() ? 'Guardando...' : 'ACTUALIZAR PERFIL' }}
+
+                <button type="submit" class="btn-submit-primary" [disabled]="profileForm.invalid || savingProfile()">
+                  {{ savingProfile() ? 'Guardando...' : 'ACTUALIZAR PERFIL COACH 🐺' }}
                 </button>
               </form>
             </div>
-          </section>
+          </div>
         }
+
       </main>
     </div>
   `,
   styles: [`
-    .dashboard-container { min-height: 100vh; background: #121212; color: #fff; font-family: sans-serif; padding-bottom: 40px; }
-    .dashboard-header { display: flex; justify-content: space-between; align-items: center; padding: 20px 40px; background: #1e1e1e; border-bottom: 2px solid #ff4500; }
-    .dashboard-header h1 { font-size: 20px; margin: 0; color: #ff4500; }
-    .user-info { display: flex; align-items: center; gap: 20px; }
-    .logout-btn { background: #333; color: #fff; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; }
-    .logout-btn:hover { background: #ff4500; }
+    .dashboard-container { min-height: 100vh; background: #0d0d0d; color: #f1f1f1; font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; padding-bottom: 60px; }
     
-    .content { padding: 40px; max-width: 900px; margin: 0 auto; }
-    .section-title h2 { color: #fff; border-left: 4px solid #ff4500; padding-left: 12px; margin-bottom: 24px; font-size: 18px; }
+    .dashboard-header { display: flex; justify-content: space-between; align-items: center; padding: 20px 32px; background: #161616; border-bottom: 3px solid #ff4500; box-shadow: 0 4px 20px rgba(0,0,0,0.5); flex-wrap: wrap; gap: 16px; }
+    .brand-box { display: flex; align-items: center; gap: 14px; }
+    .wolf-logo-badge { font-size: 32px; background: rgba(255, 69, 0, 0.15); width: 52px; height: 52px; display: flex; align-items: center; justify-content: center; border-radius: 12px; border: 1px solid rgba(255, 69, 0, 0.4); }
+    .dashboard-header h1 { font-size: 22px; margin: 0; color: #ff4500; font-weight: 800; letter-spacing: 0.5px; }
+    .subtitle-tag { font-size: 11px; color: #888; text-transform: uppercase; letter-spacing: 1px; }
 
-    .menu-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; }
-    .menu-card { background: #1e1e1e; border: 1px solid #333; border-radius: 8px; padding: 24px; cursor: pointer; transition: all 0.2s ease; text-align: center; }
-    .menu-card:hover { border-color: #ff4500; transform: translateY(-4px); background: #222; }
-    .menu-icon { font-size: 36px; margin-bottom: 12px; }
-    .menu-card h3 { margin: 0 0 8px 0; color: #fff; font-size: 18px; }
-    .menu-card p { color: #aaa; font-size: 13px; margin: 0; line-height: 1.4; }
-    .back-menu-btn { background: #333; color: #fff; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; font-weight: bold; margin-bottom: 20px; }
-    .back-menu-btn:hover { background: #ff4500; }
+    .user-info-card { display: flex; align-items: center; gap: 14px; background: #202020; padding: 8px 16px; border-radius: 30px; border: 1px solid #333; }
+    .user-avatar-small { width: 38px; height: 38px; border-radius: 50%; overflow: hidden; background: #2a2a2a; display: flex; align-items: center; justify-content: center; border: 2px solid #ff4500; font-size: 18px; }
+    .user-avatar-small img { width: 100%; height: 100%; object-fit: cover; }
+    .user-details { display: flex; flex-direction: column; }
+    .user-name { font-size: 13px; font-weight: bold; color: #fff; }
+    .streak-badge { font-size: 11px; color: #ffab91; }
+    .logout-btn { background: #2a2a2a; color: #ccc; border: none; padding: 6px 12px; border-radius: 20px; cursor: pointer; font-size: 12px; transition: all 0.2s; }
+    .logout-btn:hover { background: #ff4500; color: #fff; }
 
-    .community-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; }
-    .member-card { background: #1e1e1e; border: 1px solid #333; border-radius: 8px; padding: 20px; text-align: center; }
-    .member-avatar { width: 60px; height: 60px; border-radius: 50%; overflow: hidden; margin: 0 auto 12px auto; border: 2px solid #ff4500; display: flex; align-items: center; justify-content: center; background: #2a2a2a; font-size: 28px; }
-    .avatar-img { width: 100%; height: 100%; object-fit: cover; }
-    .member-card h3 { margin: 0 0 6px 0; color: #fff; font-size: 16px; }
-    .role-badge { font-size: 10px; padding: 3px 8px; border-radius: 4px; font-weight: bold; display: inline-block; margin-bottom: 10px; }
-    .role-badge.athlete { background: #1565c0; color: #fff; }
-    .role-badge.coach { background: #ef6c00; color: #fff; }
-    .member-bio { color: #aaa; font-style: italic; font-size: 13px; margin: 0; }
+    .content-grid-layout { padding: 32px 24px; max-width: 1000px; margin: 0 auto; }
+    .section-heading { margin-bottom: 24px; }
+    .section-heading h2 { color: #fff; border-left: 5px solid #ff4500; padding-left: 14px; margin: 0 0 6px 0; font-size: 20px; font-weight: 700; }
+    .section-heading p { color: #888; margin: 0; font-size: 13px; }
 
-    .preview-container { margin-top: 10px; display: flex; align-items: center; gap: 12px; background: #252525; padding: 10px; border-radius: 6px; }
-    .preview-img { width: 50px; height: 50px; border-radius: 50%; object-fit: cover; border: 1px solid #ff4500; }
-    .file-input { background: #2a2a2a; color: #aaa; padding: 10px; border-radius: 6px; border: 1px solid #333; cursor: pointer; width: 100%; box-sizing: border-box; }
+    .welcome-banner-hero { background: linear-gradient(135deg, #1e1e1e 0%, #141414 100%); border: 1px solid #333; border-radius: 16px; padding: 28px; margin-bottom: 24px; box-shadow: 0 8px 24px rgba(0,0,0,0.3); }
+    .hero-text h2 { margin: 0 0 8px 0; color: #ff4500; font-size: 22px; }
+    .hero-text p { margin: 0; color: #aaa; font-size: 14px; }
 
-    .classes-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 16px; margin-top: 16px; }
-    .class-card { background: #1e1e1e; border: 1px solid #333; border-radius: 8px; padding: 20px; position: relative; }
-    .time-badge { background: #ff4500; color: #fff; font-weight: bold; font-size: 12px; padding: 4px 10px; border-radius: 4px; display: inline-block; margin-bottom: 12px; }
-    .class-card h3 { margin: 0 0 10px 0; font-size: 16px; color: #fff; }
-    .spots-info { font-size: 13px; color: #aaa; margin-bottom: 6px; }
+    .menu-grid-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 20px; }
+    .interactive-card { background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 14px; padding: 24px; cursor: pointer; transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); display: flex; flex-direction: column; box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+    .interactive-card:hover { border-color: #ff4500; transform: translateY(-5px); background: #222; box-shadow: 0 10px 25px rgba(255, 69, 0, 0.15); }
+    .card-icon-wrapper { font-size: 38px; margin-bottom: 14px; background: #242424; width: 64px; height: 64px; display: flex; align-items: center; justify-content: center; border-radius: 12px; }
+    .interactive-card h3 { margin: 0 0 8px 0; color: #fff; font-size: 17px; }
+    .interactive-card p { color: #999; font-size: 12px; margin: 0 0 16px 0; line-height: 1.4; flex: 1; }
+    .card-action-link { font-size: 12px; font-weight: bold; color: #ff4500; }
 
-    .form-card { background: #1e1e1e; border-radius: 8px; padding: 24px; border: 1px solid #333; }
-    .form-row { display: flex; gap: 20px; }
-    .form-group { margin-bottom: 16px; flex: 1; }
-    label { display: block; margin-bottom: 6px; font-size: 13px; color: #bbb; }
-    input, select, textarea { width: 100%; padding: 12px; border-radius: 6px; border: 1px solid #333; background: #2a2a2a; color: white; box-sizing: border-box; font-family: inherit; }
-    input:focus, select:focus, textarea:focus { border-color: #ff4500; outline: none; }
+    .navigation-top-bar { margin-bottom: 24px; }
+    .back-menu-btn { background: #222; color: #fff; border: 1px solid #444; padding: 10px 18px; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 13px; transition: all 0.2s; }
+    .back-menu-btn:hover { background: #ff4500; border-color: #ff4500; }
+
+    .classes-grid-modern, .wods-modern-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 16px; }
+    .class-card-item, .wod-item-card-box { background: #181818; border: 1px solid #282828; border-radius: 12px; padding: 20px; display: flex; flex-direction: column; justify-content: space-between; gap: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+    .class-card-header, .wod-item-meta { display: flex; justify-content: space-between; align-items: center; }
+    .time-pill { background: #ff4500; color: #fff; font-weight: bold; font-size: 12px; padding: 4px 10px; border-radius: 6px; }
+    .spots-pill { font-size: 11px; color: #aaa; background: #252525; padding: 3px 8px; border-radius: 6px; }
+    .class-card-body h4, .wod-item-card-box h4 { margin: 0; color: #fff; font-size: 16px; }
+    .wod-desc-text { color: #aaa; font-size: 13px; margin: 0; white-space: pre-line; line-height: 1.4; }
+    
+    .btn-edit-small { background: #222; color: #fff; border: 1px solid #444; padding: 8px 14px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 12px; transition: all 0.2s; }
+    .btn-edit-small:hover { background: #ff4500; border-color: #ff4500; }
+
+    .form-card-modern, .table-card-wrapper { background: #181818; border-radius: 14px; padding: 24px; border: 1px solid #2c2c2c; margin-bottom: 24px; box-shadow: 0 4px 16px rgba(0,0,0,0.3); }
+    .form-grid-row { display: flex; gap: 16px; flex-wrap: wrap; }
+    .input-field-group { margin-bottom: 16px; flex: 1; min-width: 220px; }
+    label { display: block; margin-bottom: 6px; font-size: 12px; color: #aaa; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+    input[type="text"], input[type="date"], input[type="number"], select, textarea { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #333; background: #222; color: #fff; box-sizing: border-box; font-family: inherit; font-size: 13px; outline: none; transition: border-color 0.2s; }
+    input:focus, select:focus, textarea:focus { border-color: #ff4500; }
     textarea { resize: vertical; }
+
+    .form-button-row { display: flex; gap: 12px; align-items: center; }
+    .btn-submit-primary { background: #ff4500; color: #fff; border: none; padding: 12px 20px; border-radius: 8px; font-weight: bold; cursor: pointer; flex: 1; font-size: 13px; letter-spacing: 0.5px; transition: background 0.2s; }
+    .btn-submit-primary:hover:not(:disabled) { background: #e03d00; }
+    .btn-submit-primary:disabled { opacity: 0.4; cursor: not-allowed; }
     
-    .success-msg { background: rgba(46, 125, 50, 0.2); color: #81c784; padding: 10px; border-radius: 6px; font-size: 13px; margin-bottom: 16px; text-align: center; }
-    .button-group { display: flex; gap: 10px; }
-    .submit-btn { background: #ff4500; color: #fff; border: none; padding: 12px; border-radius: 6px; font-weight: bold; cursor: pointer; flex: 1; }
-    .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-    .cancel-edit-btn { background: #444; color: #fff; border: none; padding: 12px; border-radius: 6px; font-weight: bold; cursor: pointer; }
+    .btn-action-cancel { background: #444; color: #fff; border: none; padding: 12px 20px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 13px; transition: background 0.2s; }
+    .btn-action-cancel:hover { background: #c62828; }
 
-    .wods-list { display: flex; flex-direction: column; gap: 12px; }
-    .wod-item-card { background: #1e1e1e; border: 1px solid #333; border-radius: 8px; padding: 16px; position: relative; }
-    .wod-item-header { display: flex; justify-content: space-between; margin-bottom: 8px; }
-    .date-tag { font-size: 12px; color: #ff4500; font-weight: bold; }
-    .type-badge { font-size: 10px; background: #333; padding: 2px 8px; border-radius: 4px; }
-    .wod-item-card h4 { margin: 0 0 6px 0; color: #fff; font-size: 16px; }
-    .wod-item-card p { color: #aaa; font-size: 13px; margin: 0 0 12px 0; white-space: pre-line; }
-    .edit-btn { background: #333; color: #fff; border: none; padding: 6px 12px; border-radius: 4px; font-size: 12px; cursor: pointer; }
-    .edit-btn:hover { background: #ff4500; }
-    .delete-btn { background: #c62828; color: #fff; border: none; padding: 6px 12px; border-radius: 4px; font-size: 12px; cursor: pointer; font-weight: bold; }
-    .delete-btn:hover { background: #b71c1c; }
+    .success-alert-box { background: rgba(46, 125, 50, 0.2); color: #81c784; padding: 12px; border-radius: 8px; font-size: 13px; margin-bottom: 16px; text-align: center; border: 1px solid rgba(46, 125, 50, 0.4); }
+    .empty-card-state { background: #161616; padding: 40px; border-radius: 12px; text-align: center; color: #777; border: 1px dashed #333; font-style: italic; }
 
-    .table-container { background: #1e1e1e; border-radius: 8px; border: 1px solid #333; overflow: hidden; }
-    .athletes-table { width: 100%; border-collapse: collapse; text-align: left; font-size: 14px; }
-    .athletes-table th, .athletes-table td { padding: 14px; border-bottom: 1px solid #2a2a2a; }
-    .athletes-table th { background: #252525; color: #ff4500; }
-    .badge { font-size: 10px; padding: 3px 6px; border-radius: 4px; font-weight: bold; background: #333; color: #aaa; }
-    .badge.active { background: #2e7d32; color: #fff; }
-    .role-tag { font-size: 10px; background: #1565c0; color: #fff; padding: 3px 6px; border-radius: 4px; font-weight: bold; }
+    .modern-data-table { width: 100%; border-collapse: collapse; text-align: left; font-size: 13px; }
+    .modern-data-table th, .modern-data-table td { padding: 14px 16px; border-bottom: 1px solid #252525; }
+    .modern-data-table th { background: #141414; color: #ff4500; font-weight: 700; text-transform: uppercase; font-size: 11px; letter-spacing: 0.5px; }
+    .date-text { color: #888; }
+    .badge-rx-scaled { font-size: 10px; padding: 3px 8px; border-radius: 4px; font-weight: bold; }
+    .rx-badge { background: #2e7d32; color: #fff; }
+    .scaled-badge { background: #ef6c00; color: #fff; }
+
+    .community-grid-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 18px; }
+    .member-profile-card { background: #181818; border: 1px solid #2c2c2c; border-radius: 14px; padding: 22px; text-align: center; box-shadow: 0 4px 12px rgba(0,0,0,0.2); transition: transform 0.2s, border-color 0.2s; }
+    .member-profile-card.clickable-card { cursor: pointer; }
+    .member-profile-card.clickable-card:hover { border-color: #ff4500; transform: translateY(-4px); }
+    .member-avatar-box { width: 64px; height: 64px; border-radius: 50%; overflow: hidden; margin: 0 auto 14px auto; border: 2px solid #ff4500; display: flex; align-items: center; justify-content: center; background: #222; font-size: 30px; box-shadow: 0 0 15px rgba(255,69,0,0.3); }
+    .avatar-real-img { width: 100%; height: 100%; object-fit: cover; }
+    .member-profile-card h3 { margin: 0 0 8px 0; color: #fff; font-size: 16px; }
+    .role-pill-badge { font-size: 10px; padding: 4px 10px; border-radius: 20px; font-weight: bold; display: inline-block; margin-bottom: 12px; letter-spacing: 0.5px; }
+    .badge-athlete { background: rgba(21, 101, 192, 0.2); color: #64b5f6; border: 1px solid rgba(21, 101, 192, 0.4); }
+    .badge-coach { background: rgba(239, 108, 0, 0.2); color: #ffb74d; border: 1px solid rgba(239, 108, 0, 0.4); }
+    .member-bio-text { color: #999; font-style: italic; font-size: 12px; margin: 0 0 12px 0; line-height: 1.4; }
+    .view-profile-link { font-size: 11px; font-weight: bold; color: #ff4500; text-transform: uppercase; }
+
+    .profile-edit-box { max-width: 600px; margin: 0 auto; }
+    .file-upload-wrapper { margin-bottom: 8px; }
+    .custom-file-input { background: #222; color: #aaa; padding: 10px; border-radius: 8px; border: 1px solid #333; cursor: pointer; width: 100%; box-sizing: border-box; font-size: 12px; }
+    .preview-badge-container { display: flex; align-items: center; gap: 14px; background: #202020; padding: 10px 14px; border-radius: 8px; margin-top: 8px; border: 1px solid #333; }
+    .img-preview-circle { width: 44px; height: 44px; border-radius: 50%; object-fit: cover; border: 2px solid #ff4500; }
+    .success-preview-text { color: #81c784; font-size: 12px; font-weight: 600; }
   `]
 })
 export class CoachDashboardComponent implements OnInit {
@@ -494,7 +593,7 @@ export class CoachDashboardComponent implements OnInit {
   profileForm: FormGroup = this.fb.group({
     nombre: ['', Validators.required],
     fotoUrl: [''],
-    bio: ['']
+    bio: ['', Validators.required]
   });
 
   async ngOnInit() {
@@ -544,6 +643,14 @@ export class CoachDashboardComponent implements OnInit {
   async loadAnnouncements() {
     const anns = await this.announcementService.getAllAnnouncements();
     this.announcementsList.set(anns);
+  }
+
+  goToProfile(uid: string) {
+    this.router.navigate(['/community/profile', uid]);
+  }
+
+  goToCompetitions() {
+    this.router.navigate(['/competitions']);
   }
 
   selectWodForEdit(wod: Wod) {
@@ -674,7 +781,7 @@ export class CoachDashboardComponent implements OnInit {
     });
   }
 
-  async deleteAnnouncement(id: string) {
+  deleteAnnouncement(id: string) {
     if (confirm('¿Estás seguro de eliminar este anuncio del muro?')) {
       this.announcementService.deleteAnnouncement(id).subscribe({
         next: async () => {
@@ -695,7 +802,7 @@ export class CoachDashboardComponent implements OnInit {
     this.adminService.updateProfile(uid, this.profileForm.value).subscribe({
       next: () => {
         this.savingProfile.set(false);
-        this.profileSuccess.set('¡Perfil actualizado con éxito!');
+        this.profileSuccess.set('¡Perfil actualizado con éxito en la manada!');
       },
       error: () => this.savingProfile.set(false)
     });

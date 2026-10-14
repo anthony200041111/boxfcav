@@ -1,6 +1,8 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './core/guards/auth.guard';
 import { roleGuard } from './core/guards/role.guard';
+import { CommunityProfileComponent } from './shared/community-profile.component';
+import { CompetitionsPageComponent } from './features/competitions/competitions-page.component';
 
 export const routes: Routes = [
   {
@@ -30,8 +32,14 @@ export const routes: Routes = [
     loadComponent: () => import('./features/auth/pages/register-page.component').then(m => m.RegisterPageComponent)
   },
   {
-    path: 'admin',
-    loadComponent: () => import('./features/admin/pages/admin-dashboard.component').then(m => m.AdminDashboardComponent)
+    path: 'community/profile/:uid',
+    component: CommunityProfileComponent,
+    canActivate: [authGuard]
+  },
+  {
+    path: 'competitions',
+    component: CompetitionsPageComponent,
+    canActivate: [authGuard]
   },
   { path: '', redirectTo: 'auth', pathMatch: 'full' },
   { path: '**', redirectTo: 'auth' }
